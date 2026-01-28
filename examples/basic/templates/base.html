@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="locale" content="{{ site.locale }}">
+    <title>{{ page.title }}</title>
+</head>
+
+<body>
+    <header>
+        <h1>{{ page.title }}</h1>
+    </header>
+    <main>
+        {{ page.html_content | safe }}
+    </main>
+    <footer>
+        <p>&copy; {{ site.year }} {{ site.title }}</p>
+    </footer>
+</body>
+
+</html>

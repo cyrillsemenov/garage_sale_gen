@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="locale" content="{{ site.locale }}">
+    <title>{{ page.title }}</title>
+    <style>
+        body {
+            background-color: #c0c0c0;
+            font-family: "Times New Roman", Times, serif;
+            color: black;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .main {
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        table {
+            width: 100%;
+            background-color: white;
+            border: 4px outset #d0d0d0;
+            border-collapse: separate;
+            border-spacing: 2px;
+        }
+
+        th,
+        td {
+            border: 2px inset #d0d0d0;
+            padding: 4px;
+        }
+
+        th {
+            background-color: #d0d0d0;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        td {
+            vertical-align: top;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: small;
+            border-top: 2px groove white;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>{{ page.title }}</h1>
+    </header>
+    <main>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Abilities</th>
+                    <th>Types</th>
+                    <th>Weight</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%- for item in page.children %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>
+                        {%- for ability in item.abilities -%}
+                        <span class="ability{% if ability.hidden %} hidden{% endif %}">
+                            {%- if not loop.first %}, {%endif %}{{ ability.name -}}</span>
+                        {%- endfor -%}
+                    </td>
+                    <td>
+                        {% set types = [] | concat(with=item.types) | concat(with=item.path_segments) -%}
+                        {{ types | unique | join(sep=", ") }}
+                    </td>
+                    <td>{{ item.weight }}</td>
+                </tr>
+                {%- endfor %}
+            </tbody>
+        </table>
+    </main>
+    <footer>
+        <p>&copy; {{ now() | date(format="%Y") }}</p>
+    </footer>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const showHidden = urlParams.get('showHidden');
+        if (showHidden) {
+            document.querySelectorAll(".hidden").forEach(e => e.classList.remove("hidden"));
+        }
+    </script>
+</body>
+
+</html>

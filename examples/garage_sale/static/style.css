@@ -1,0 +1,310 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+:root {
+    --text-color: hsl(120, 23%, 95%);
+    --background-color: hsl(180, 1%, 14%);
+    --border-color: hsl(from var(--text-color) h s l / 0.5);
+    --border-color-thin: hsl(from var(--text-color) h s l / 0.25);
+    --surface-color: hsl(from var(--text-color) h s l / 0.05);
+    --max-content-width: 790px;
+    --aside-width: 10rem;
+    --shadow-color: black;
+    --shadow-size: 2em;
+}
+
+* {
+    box-sizing: border-box;
+    color: var(--text-color);
+}
+
+body {
+    font-family: "JetBrains Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    max-width: var(--max-content-width);
+    margin: auto;
+    background-color: var(--background-color);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2em;
+}
+
+footer{
+    text-align: center;
+    margin: 2em 0 1em;
+}
+
+header h1 {
+    margin: 1em 0 0.5em;
+}
+
+.subheader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.headcrumbs a {
+    color: var(--text-color) !important;
+    opacity: 0.75;
+    text-decoration: none;
+    transition: all ease-in-out 0.3s;
+}
+
+.headcrumbs a:hover {
+    opacity: 0.9;
+    text-decoration: underline;
+}
+
+.headcrumbs a::before {
+    content: "/";
+    text-decoration: none;
+}
+
+.list-main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    flex: 1;
+    padding-right: 1em;
+}
+
+.item-header {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 5em;
+    justify-content: space-between;
+    margin-bottom: 0.5em;
+}
+
+.item-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.item-title {
+    margin: 0;
+}
+
+.item-product-price {
+    display: flex;
+    flex-direction: row;
+    gap: 0.4em;
+}
+
+.item-product-price del {
+    text-decoration-thickness: 2px;
+    text-decoration-color: var(--border-color);
+    opacity: 0.5;
+}
+
+.item-tags {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 0.5em;
+}
+
+.item-tag.tag {
+    cursor: default !important;
+}
+
+.item-dates {
+    font-size: 0.75em;
+    opacity: 0.5;
+}
+
+.tags-filter-container {
+    width: 20ch !important;
+    align-self: flex-start;
+    flex-shrink: 0;
+    max-height: calc(100vh - 2em);
+    overflow-y: scroll;
+    position: sticky;
+    top: 1em;
+
+    border: solid 1px var(--border-color-thin);
+    padding: 1em;
+    border-radius: 0.25em;
+    /* background-color: var(--surface-color); */
+
+    background:
+        linear-gradient(hsl(from var(--shadow-color) h s l / 0.0), transparent) center top,
+        linear-gradient(transparent, hsl(from var(--shadow-color) h s l / 0.5)) center bottom,
+        linear-gradient(var(--surface-color), var(--surface-color));
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    background-size: 100% var(--shadow-size), 100% var(--shadow-size), 100% 100%;
+    background-attachment: scroll, scroll,  scroll;
+    background-blend-mode: overlay, overlay, normal;
+    background-clip: padding-box;
+    transition: color ease-in-out 300ms;
+}
+
+.tags-filter {
+    align-items: end;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+    justify-content: start;
+}
+
+.filter-form {
+    display: flex;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+    gap: 0.25rem;
+    flex-direction: row;
+    margin-bottom: 1em;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.filter-form input[type="text"] {
+    max-width: calc(100% - 2.25em);
+    padding: 0.25em 0.5em;
+    background-color: var(--background-color);
+    border-radius: 0.25em;
+    border: solid 1px var(--border-color);
+    box-sizing: border-box;
+    font-size: 1rem;
+    text-align: right;
+    z-index: 1;
+}
+
+.filter-form input[type="text"]:focus {
+    outline: none;
+}
+
+.filter-form button {
+    height: 2em;
+    width: 2em;
+    padding: 0;
+    background-color: var(--background-color);
+    border-radius: 0.25em;
+    border: solid 1px var(--border-color);
+    box-sizing: border-box;
+    font-size: 1rem;
+    text-align: center;
+    transition: all ease-in-out 0.3s;
+}
+
+.filter-form button:focus {
+    outline: none;
+}
+
+.filter-form button:hover {
+    background-color: transparent;
+}
+
+.tag {
+    background: black;
+    border-radius: 1.5em;
+    cursor: pointer;
+    font-size: 0.75rem;
+    opacity: 0.7;
+    padding: 0.25em 0.5em;
+    transition: opacity ease-in-out 0.3s;
+    white-space: nowrap;
+}
+
+.tags-filter .tag {
+    max-width: calc(var(--aside-width) - 3rem);
+    overflow-x: clip;
+    text-overflow: ellipsis;
+}
+
+.tag:hover {
+    opacity: 1;
+}
+
+.tag.selected {
+    opacity: 1;
+    border: solid 2px var(--border-color);
+    padding: calc(0.25em - 2px) calc(0.5em - 2px);
+}
+
+.bg-container {
+    left: 0 !important;
+    margin: 0 !important;
+    opacity: 0.05 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: fixed !important;
+    top: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: -9999;
+}
+
+.bg-container canvas {
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    scale: 4;
+}
+
+@media screen and (width <= 790px) {
+    body {
+        max-width: 100% !important;
+        padding: 0 1em !important;
+    }
+
+    .item-header {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+        gap: 0.25em !important;
+        margin-bottom: 1em !important;
+    }
+
+
+    .list-main {
+        flex-direction: column-reverse !important;
+    }
+
+    .item-list {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .item {
+        border-bottom: solid 3px var(--text-color) !important;
+    }
+
+    .item-tag.tag {
+        max-width: 10em !important;
+        overflow-x: clip !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .tags-filter-container {
+        position: initial !important;
+        margin-bottom: 2em !important;
+        max-height: 10em !important;
+        width: 100% !important;
+    }
+
+    .tags-filter-container input[type="text"] {
+        width: 100% !important;
+    }
+
+    .tags-filter {
+        flex-direction: initial !important;
+        flex-wrap: wrap !important;
+        width: 100% !important;
+    }
+
+    .filter-form {
+        font-size: max(1rem, 16px) !important;
+    }
+}

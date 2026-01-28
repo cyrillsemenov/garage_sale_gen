@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{%- block title %}{{ super() }} - {{ page.title }}{% endblock title %}
+{%- block main -%}
+<main class="item-main">
+    <div class="item" {% for tag in page.tags %}data-{{ tag | slugify }} {% endfor %}id="{{ page.stem | slugify }}">
+        <div class="item-header">
+            <h2 class="item-title">{{ page.title }}</h2>
+            <div class="item-product-price">
+                {% if page.compare_at -%}
+                <del data-price="{{ page.compare_at }}">{{ page.compare_at }} {{ site.currency_code }}</del>
+                <span data-price="{{ page.price }}">{{ page.price }}{{ site.currency_code }}</span>
+                {%- else -%}
+                <span data-price="{{ page.price }}">{{ page.price }} {{ site.currency_code }}</span>
+                {%- endif %}
+            </div>
+        </div>
+        <div class="item-footer">
+            <div class="item-tags">
+                {%- for tag in page.tags %}
+                <span class="item-tag tag"
+                    style="color: {{ tag | word_text_color }}; background-color: {{ tag | word_to_color }};"
+                    data-tag="{{ tag | slugify }}">{{ tag }}</span>
+                {%- endfor %}
+            </div>
+            {#- <div class="item-dates">
+                {% set created = page.created | date(format="%Y-%m-%d %H:%M", locale=site.locale ) -%}
+                {% set modified = page.modified | date(format="%Y-%m-%d %H:%M", locale=site.locale ) -%}
+                Created: <span>{{ created }}</span>
+                {% if created != modified -%}<br />
+                Updated: <span>{{ modified }}</span>
+                {%- endif %}
+            </div> #}
+        </div>
+    </div>
+    <div class="content">
+        {{ page.html_content | safe }}
+    </div>
+</main>
+{%- endblock main -%}

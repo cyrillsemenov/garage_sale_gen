@@ -1,0 +1,156 @@
+{%- extends "base.html" %}
+{%- block title %}{{ super() }} - Main{% endblock title %}
+{%- block main -%}
+{%- set_global tags = [] %}
+<main class="list-main">
+    <div class="item-list">
+        {%- for item in page.children %}
+        {% set item_tags = item.tags | concat(with=item.path_segments) | pop(value="items") -%}
+        {% set_global tags = tags | concat(with=item_tags) -%}
+        <div class="item" {% for tag in item_tags %}data-{{ tag | kebab_case }} {% endfor%}
+            id="{{ item.stem | slugify }}">
+            <div class="item-header">
+                <h2 class="item-title">
+                    <a href="{{ item.url }}">{{ item.title }}</a>
+                </h2>
+                <div class="item-product-price">
+                    {% if item.compare_at -%}
+                    <del data-price="{{ item.compare_at }}">{{ item.compare_at }} {{ site.currency_code }}</del>
+                    <span data-price="{{ item.price }}">{{ item.price }} {{ site.currency_code }}</span>
+                    {%- else -%}
+                    <span data-price="{{ item.price }}">{{ item.price }} {{ site.currency_code }}</span>
+                    {%- endif %}
+                </div>
+            </div>
+            <div class="item-footer">
+                <div class="item-tags">
+                    {%- for tag in item_tags %}
+                    <span class="item-tag tag"
+                        style="color: {{ tag | word_text_color }}; background-color: {{ tag | word_to_color }};"
+                        data-tag="{{ tag | slugify }}">{{ tag }}</span>
+                    {%- endfor %}
+                </div>
+                {#-<div class="item-dates">
+                    {% set created = item.created | date(format="%Y-%m-%d %H:%M", locale=site.locale ) -%}
+                    {% set modified = item.modified | date(format="%Y-%m-%d %H:%M", locale=site.locale ) -%}
+                    Created: <span>{{ created }}</span>
+                    {% if created != modified -%}<br />
+                    Updated: <span>{{ modified }}</span>
+                    {%- endif %}
+                </div>#}
+            </div>
+        </div>
+        {%- endfor -%}
+    </div>
+    <aside class="tags-filter-container">
+        <div class="filter-form">
+            <input type="text" placeholder="filter tags" />
+            <button type="reset" title="clear selected">✗</button>
+        </div>
+        <div class="tags-filter">
+            {%- for tag in tags %}
+            <span class="tag" style="color: {{ tag | word_text_color }}; background-color: {{ tag | word_to_color }};"
+                title="{{tag}}" data-tag="{{ tag | mixed_case }}">{{ tag }}</span>
+            {%- endfor -%}
+        </div>
+    </aside>
+</main>
+<script>
+    let selected_tags = new Set();
+    let runFilter;
+
+    function setItemVisibilityByTags(e) {
+        if (!selected_tags.size) {
+            e.style.display = "block";
+            return;
+        }
+        let display = "none";
+        for (let d in e.dataset) {
+            if (selected_tags.has(d)) {
+                display = "block";
+                break;
+            }
+        }
+        e.style.display = display;
+    }
+
+    function updateVisibleItems() {
+        document.querySelectorAll(".item").forEach(setItemVisibilityByTags);
+    }
+
+    function toggleTagFilter(e) {
+        if (selected_tags.has(this.dataset.tag)) {
+            selected_tags.delete(this.dataset.tag);
+            this.classList.remove("selected");
+        } else {
+            selected_tags.add(this.dataset.tag);
+            this.classList.add("selected");
+        }
+        clearTimeout(runFilter);
+        runFilter = setTimeout(updateVisibleItems, 100);
+    }
+
+    document.querySelectorAll(".tags-filter .tag").forEach(e => e.addEventListener("click", toggleTagFilter));
+
+    function clearSelectedTags(e) {
+        selected_tags.clear();
+        clearTimeout(runFilter);
+        document.querySelectorAll(".tags-filter .tag").forEach(el => {
+            el.classList.remove("selected");
+            el.style.display = "block";
+        });
+        document.querySelector(".filter-form input[type='text']").value = "";
+        updateVisibleItems();
+    }
+
+    let params = new URLSearchParams(document.location.search);
+    let tags_param = params.get("tags");
+    if (tags_param !== null) {
+        console.log(tags_param);
+        tags_param.split(",").forEach((t) => {
+            document.querySelector(`.tags-filter .tag[data-tag='${t}']`).dispatchEvent(new Event("click"));
+        });
+    }
+
+    function filterTags(e) {
+        document.querySelectorAll(".tags-filter .tag").forEach(e => {
+            e.style.display = e.textContent.toLowerCase().includes(this.value.toLowerCase()) ? "block" : "none";
+        })
+    }
+    document.querySelector(".filter-form input[type='text']").addEventListener("input", filterTags);
+    document.querySelector(".filter-form button").addEventListener("click", clearSelectedTags);
+
+    let updateHints;
+    const clamp01 = v => Math.min(Math.max(v, 0), 1);
+
+    function scrollHints(el) {
+        const fade_len = 256;
+        const max_a = 0.5;
+        const scrollBottom = el.scrollHeight - el.clientHeight - el.scrollTop;
+        const bottom_a = max_a * clamp01(scrollBottom / fade_len);
+        const top_a = max_a * clamp01(el.scrollTop / fade_len);
+        const top_color = `hsl(from var(--shadow-color) h s l / ${top_a})`;
+        const bottom_color = `hsl(from var(--shadow-color) h s l / ${bottom_a})`;
+
+        bg_style = `background:
+            linear-gradient(${top_color}, transparent) center top,
+            linear-gradient(transparent, ${bottom_color}) center bottom,
+            linear-gradient(var(--surface-color), var(--surface-color));
+            background-repeat: no-repeat, no-repeat, no-repeat;
+            background-size: 100% var(--shadow-size), 100% var(--shadow-size), 100% 100%;
+            background-attachment: scroll, scroll,  scroll;
+            background-blend-mode: overlay, overlay, normal;
+            background-clip: padding-box;`
+        el.style = bg_style;
+        updateHints = undefined;
+    }
+
+    function throttleScrollHints(e) {
+        if (updateHints === undefined) {
+            updateHints = setTimeout(() => scrollHints(this), 300);
+        }
+    }
+
+    document.querySelector(".tags-filter-container").addEventListener("scroll", throttleScrollHints);
+</script>
+{%- endblock main -%}

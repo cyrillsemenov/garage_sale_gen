@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="" />
+    <meta name="locale" content="{{ site.locale }}">
+    <meta name="currency_code" content="{{ site.currency_code }}">
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/glslCanvas@0.2.6/dist/GlslCanvas.min.js"></script>
+    <script src="/script.js"></script>
+    <link rel="stylesheet" href="/style.css" />
+    <title>{% block title %}{{ site.title }}{% endblock title %}</title>
+</head>
+
+<body>
+    <header>
+        <h1>Garage Sale</h1>
+        <div class="subheader">
+            <div class="header-links">
+                {% for item in site.navigation | sort(attribute="order") -%}
+                {%- if page.url == item.url -%}
+                <b>{{ item.title }}</b>
+                {% else -%}
+                <a href="{{ item.url }}">{{ item.title }}</a>
+                {% endif -%}
+                {%- endfor %}
+            </div>
+        </div>
+    </header>
+    {% block main %}{{ page.html_content | safe }}{% endblock main %}
+    <footer>
+        Hi there! {{ now() | date(format="%Y") }}
+    </footer>
+    <div class="bg-container">
+        <canvas class="glslCanvas" data-fragment-url="/shader.frag"></canvas>
+    </div>
+</body>
+
+</html>
