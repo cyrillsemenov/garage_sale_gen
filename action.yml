@@ -1,0 +1,20 @@
+name: 'Garage Sale Site Generator'
+description: 'Build your Garage Sale static site using the official Docker image'
+inputs:
+  source:
+    description: 'Directory containing the site source'
+    required: false
+    default: '.'
+  output:
+    description: 'Directory for build output'
+    required: false
+    default: 'public'
+  # Removed 'clean', 'verbose', 'env_prefix' as they require CLI flags or complex arg construction.
+  # The Docker action runs 'build' by default.
+
+runs:
+  using: 'docker'
+  image: 'docker://ghcr.io/cyrillsemenov/garage_sale_gen:latest'
+  env:
+    SITE_BASE_PATH: ${{ inputs.source }}
+    SITE_OUTPUT_PATH: ${{ inputs.output }}
